@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Scenes/Sample Mjpeg Viewer.unity
+  isLoaded: 1
+  isActive: 1
