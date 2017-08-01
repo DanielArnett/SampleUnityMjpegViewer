@@ -4,8 +4,8 @@ To use:
 
 1. Open "Mjpg Viewer/Assets/Scenes/Sample Mjpeg Viewer.unity" in Unity3D.
 
-2. Play the Sample Mjpeg Viewer scene.
+2. Select the plane acting as the video screen and edit the url parameter to display a live MJPEG stream (you can use these to test with https://febon.blogspot.com/2013/02/public-free-ip-address-for-motion-jpeg.html ). The url should end in .mjpg
 
-3. (Optional) Open a web browser and go to http://extcam-16.se.axis.com and click the "Start Train" button to move the model train. You can then test the latency and framerate by watching the stream in the Unity3D window.
+3. Play the Sample Mjpeg Viewer scene and wait a few seconds for the MJPEG stream to connect.
 
 Enjoy!
