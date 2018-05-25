@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System;
 using System.Text;
@@ -10,11 +10,12 @@ using System.Threading;
 using System.Drawing;
 
 public class MjpegProcessor {
+
     public Bitmap bitmap { get; set; }
     // 2 byte header for JPEG images
     private readonly byte[] JpegHeader = new byte[] { 0xff, 0xd8 };
     // pull down 1024 bytes at a time
-    private const int ChunkSize = 1024*50;
+    private int _chunkSize = 1024*4;
     // used to cancel reading the stream
     private bool _streamActive;
     // current encoded JPEG image
@@ -30,9 +31,10 @@ public class MjpegProcessor {
     public event EventHandler<FrameReadyEventArgs> FrameReady;
     public event EventHandler<ErrorEventArgs> Error;
 
-    public MjpegProcessor()
+    public MjpegProcessor(int chunkSize = 4 * 1024)
     {
         _context = SynchronizationContext.Current;
+        _chunkSize = chunkSize;
     }
 
 
@@ -43,7 +45,7 @@ public class MjpegProcessor {
 
     public void ParseStream(Uri uri, string username, string password)
     {
-        print("Parsing Stream " + uri.ToString());
+        Debug.Log("Parsing Stream " + uri.ToString());
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
             request.Credentials = new NetworkCredential(username, password);
@@ -106,30 +108,26 @@ public class MjpegProcessor {
         return -1;
     }
 
-    private void print(String str) 
-    {
-        Debug.Log(str);
-    }
     private void OnGetResponse(IAsyncResult asyncResult)
     {
         responseReceived = true;
-        print("OnGetResponse");
+        Debug.Log("OnGetResponse");
         byte[] imageBuffer = new byte[1024 * 1024];
 
-        print("Starting request");
+        Debug.Log("Starting request");
         // get the response
         HttpWebRequest req = (HttpWebRequest)asyncResult.AsyncState;
 
         try
         {
-            print("OnGetResponse try entered.");
+            Debug.Log("OnGetResponse try entered.");
             HttpWebResponse resp = (HttpWebResponse)req.EndGetResponse(asyncResult);
-            print("response received");
+            Debug.Log("response received");
             // find our magic boundary value
             string contentType = resp.Headers["Content-Type"];
             if (!string.IsNullOrEmpty(contentType) && !contentType.Contains("="))
             {
-                print("MJPEG Exception thrown");
+                Debug.Log("MJPEG Exception thrown");
                 throw new Exception("Invalid content-type header.  The camera is likely not returning a proper MJPEG stream.");
             }
 
@@ -140,7 +138,7 @@ public class MjpegProcessor {
             BinaryReader br = new BinaryReader(s);
 
             _streamActive = true;
-            byte[] buff = br.ReadBytes(ChunkSize);
+            byte[] buff = br.ReadBytes(_chunkSize);
 
             while (_streamActive)
             {
@@ -155,7 +153,7 @@ public class MjpegProcessor {
 
                     while (true)
                     {
-                        buff = br.ReadBytes(ChunkSize);
+                        buff = br.ReadBytes(_chunkSize);
 
                         // Find the end of the jpeg
                         int imageEnd = FindBytes(buff, boundaryBytes);
@@ -189,7 +187,7 @@ public class MjpegProcessor {
 
                         if (!_streamActive)
                         {
-                            print("CLOSING");
+                            Debug.Log("CLOSING");
                             resp.Close();
                             break;
                         }
@@ -210,7 +208,7 @@ public class MjpegProcessor {
 
 public class FrameReadyEventArgs : EventArgs
 {
-	
+  
 }
 
 public sealed class ErrorEventArgs : EventArgs
