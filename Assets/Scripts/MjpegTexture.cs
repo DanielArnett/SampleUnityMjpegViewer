@@ -1,8 +1,6 @@
 using UnityEngine;
 using System;
 
-using UnityEngine.UI;
-
 /// <summary>
 /// A Unity3D Script to dipsplay Mjpeg streams. Apply this script to the mesh that you want to use to view the Mjpeg stream. 
 /// </summary>
@@ -10,7 +8,7 @@ public class MjpegTexture : MonoBehaviour
 {
     /// <param name="streamAddress">
     /// Set this to be the network address of the mjpg stream. 
-    /// Example: "http://extcam-16.se.axis.com/mjpg/video.mjpg"
+    /// Example: "http://camera19.city.tarumizu.kagoshima.jp/nphMotionJpeg?Resolution=640x480"
     /// </param>
     [Tooltip("Set this to be the network address of the mjpg stream. ")]
     public string streamAddress;
