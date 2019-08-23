@@ -5,13 +5,9 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Threading;
-// If you see the error "The type or namespace name `Drawing' does not exist in the namespace `System'. Are you missing an assembly reference?"
-// Then you need to copy "System.Drawing.dll" from the Mono directory into your Unity Project Directory
-using System.Drawing;
 
 public class MjpegProcessor {
 
-    public Bitmap bitmap { get; set; }
     // 2 byte header for JPEG images
     private readonly byte[] JpegHeader = new byte[] { 0xff, 0xd8 };
     // pull down 1024 bytes at a time
